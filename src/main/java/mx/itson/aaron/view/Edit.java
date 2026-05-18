@@ -31,9 +31,9 @@ public class Edit extends javax.swing.JFrame {
     //
     //Constructor principal.
     
-    //inventoryAdmin  referencia al padre para refrescar la tabla al guardar
-    //producto        null = modo AGREGAR, producto cargado = modo EDITAR
-    //productController  controlador compartido
+    //inventoryAdmin        referencia al padre para refrescar la tabla al guardar
+    //producto      null = modo AGREGAR, producto cargado = modo EDITAR
+    //productController     controlador compartido
     public Edit(InventoryAdmin inventoryAdmin, Product producto, ProductController productController) {
         this.inventoryAdmin = inventoryAdmin;
         this.productoEditando = producto;
@@ -285,12 +285,12 @@ public class Edit extends javax.swing.JFrame {
         ProductController.SaveResult resultado;
  
         if (productoEditando == null) {
-            // Modo AGREGAR
+            //Modo AGREGAR
             resultado = productController.agregarProducto(
                 nombre, descripcion, categoria, precioTexto, ofertaTexto, stockTexto
             );
         } else {
-            // Modo EDITAR
+            //Modo EDITAR
             resultado = productController.actualizarProducto(
                 productoEditando.getId(), nombre, descripcion, categoria,
                 precioTexto, ofertaTexto, stockTexto

@@ -65,7 +65,7 @@ public class ProductController {
         try {
             List<Product> productos = obtenerTodos();
             
-            //*Validar que la lista no sea null o vacía
+            //Validar que la lista no sea null o vacía
             if (productos == null || productos.isEmpty()) {
                 System.out.println("No hay productos en la BD");
                 return new Object[0][COLUMNAS_INVENTARIO.length];
@@ -138,7 +138,7 @@ public class ProductController {
         SaveResult validacion = validarCampos(nombre, precioTexto, precioOfertaTexto, stockTexto, id);
         if (validacion != SaveResult.OK) return validacion;
  
-        //*Verificar nombre duplicado en otro producto
+        //Verificar nombre duplicado en otro producto
         Product existente = productDAO.buscarPorNombre(nombre.trim());
         if (existente != null && existente.getId() != id) return SaveResult.NOMBRE_DUPLICADO;
  

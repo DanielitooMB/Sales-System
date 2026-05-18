@@ -43,7 +43,6 @@ public class UserController {
     }
     
     //Registro CREAR CUENTA
-    
     public boolean registrarUsuario(String nombre, String email, String contraseña) {
         if (nombre == null || nombre.trim().isEmpty() || email == null || email.trim().isEmpty() || contraseña == null || contraseña.trim().isEmpty()) {
             return false;

@@ -51,7 +51,7 @@ public class InventoryAdmin extends javax.swing.JFrame {
             String[]   columns = controller.getTableColumns();
  
             if (data == null || data.length == 0) {
-                System.out.println("⚠️ No hay productos para mostrar");
+                System.out.println("No hay productos para mostrar");
                 JOptionPane.showMessageDialog(this,
                     "No hay productos disponibles",
                     "Inventario vacío",
@@ -271,7 +271,7 @@ public class InventoryAdmin extends javax.swing.JFrame {
             return;
         }
  
-        // Abre Edit en modo EDITAR con el producto cargado
+        //Abre Edit en modo EDITAR con el producto cargado
         Edit editFrame = new Edit(this, producto, productController);
         editFrame.setVisible(true);
         this.setVisible(false);

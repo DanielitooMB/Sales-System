@@ -34,7 +34,7 @@ public class OrderDao {
             conn = Connection.getConnection();
             conn.setAutoCommit(false);
  
-            // 1. Insertar la orden
+            //Insertar la orden
             int ordenId;
             try (PreparedStatement stmtOrden = conn.prepareStatement(sqlOrden, Statement.RETURN_GENERATED_KEYS)) {
                 stmtOrden.setInt(1, orden.getClienteId());

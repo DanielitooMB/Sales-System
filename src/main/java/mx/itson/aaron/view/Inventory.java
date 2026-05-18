@@ -52,7 +52,7 @@ public class Inventory extends javax.swing.JFrame {
             Object[][] data = productController.getDataParaTabla();
             
             if (data == null || data.length == 0) {
-                System.out.println("⚠️ No hay productos en la BD");
+                System.out.println("No hay productos en la BD");
                 JOptionPane.showMessageDialog(this, 
                     "No hay productos disponibles", 
                     "Inventario vacío", 

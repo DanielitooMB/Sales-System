@@ -49,7 +49,7 @@ public class InventoryAdminController {
         return ProductController.COLUMNAS_INVENTARIO;
     }
     
-    //*Obtener todas las categorías para ComboBox
+    //Obtener todas las categorías para ComboBox
     public List<Category> getAllCategories() {
         try {
             List<Category> categorias = categoryDao.obtenerTodas();
@@ -66,7 +66,7 @@ public class InventoryAdminController {
         }
     }
     
-    //*btener producto por ID
+    //Obtener producto por ID
     public Product getProductById(int id) {
         try {
             return productDao.buscarPorId(id);
@@ -93,7 +93,7 @@ public class InventoryAdminController {
                 return "El stock es obligatorio";
             }
             
-            //*Usar ProductController para crear
+            //Usar ProductController para crear
             ProductController.SaveResult result = productController.agregarProducto(
                 nombre, descripcion, categoria, precio, precioOferta, stock
             );
