@@ -86,9 +86,10 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jButton3" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
-                          <Component id="jButton2" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
-                          <Component id="jButton1" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
+                          <Component id="MenuBtn1" min="-2" pref="230" max="-2" attributes="0"/>
+                          <Component id="MenuBtn4" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
+                          <Component id="MenuBtn3" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
+                          <Component id="MenuBtn2" alignment="1" min="-2" pref="230" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -105,12 +106,14 @@
                           <Component id="txtlbl1" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" pref="40" max="-2" attributes="0"/>
+                      <Component id="MenuBtn1" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace pref="12" max="32767" attributes="0"/>
+                      <Component id="MenuBtn2" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="MenuBtn3" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jButton2" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jButton3" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace pref="110" max="32767" attributes="0"/>
+                      <Component id="MenuBtn4" min="-2" pref="40" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -152,20 +155,37 @@
                 <Property name="text" type="java.lang.String" value="..."/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="MenuBtn2">
               <Properties>
                 <Property name="text" type="java.lang.String" value="PUNTO DE VENTA"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MenuBtn2MouseClicked"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="MenuBtn3">
               <Properties>
                 <Property name="text" type="java.lang.String" value="INVENTARIO"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MenuBtn3MouseClicked"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="MenuBtn4">
               <Properties>
                 <Property name="text" type="java.lang.String" value="REPORTES"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MenuBtn4MouseClicked"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="MenuBtn1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="CLIENTE"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="MenuBtn1MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

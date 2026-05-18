@@ -5,7 +5,7 @@
 package mx.itson.aaron.controller;
 
 import java.util.List;
-import mx.itson.aaron.dao.UserDAO;
+import mx.itson.aaron.dao.UserDao;
 import mx.itson.aaron.model.User;
 
 /**
@@ -14,11 +14,11 @@ import mx.itson.aaron.model.User;
  */
 public class UserController {
     
-    private final UserDAO userDAO;
+    private final UserDao userDAO;
     private User usuarioActual;
     
     public UserController() {
-        this.userDAO = new UserDAO();
+        this.userDAO = new UserDao();
         this.usuarioActual = null;
     }
     

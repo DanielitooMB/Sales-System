@@ -110,7 +110,7 @@ public class Main extends javax.swing.JFrame {
                                     .addComponent(GmailTfld, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addGap(81, 81, 81))
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(71, 71, 71)
+                .addGap(72, 72, 72)
                 .addComponent(EnterBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -209,7 +209,7 @@ public class Main extends javax.swing.JFrame {
             User usuarioLogeado = userController.getUsuarioActual();
             JOptionPane.showMessageDialog(this, "¡Bienvenido " + usuarioLogeado.getNombre() + "!", "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
             
-            Menu menu = new Menu(usuarioLogeado.getNombre());
+            Menu menu = new Menu(usuarioLogeado.getNombre(), usuarioLogeado.getId());
             menu.setVisible(true);
             this.dispose(); 
         } else {

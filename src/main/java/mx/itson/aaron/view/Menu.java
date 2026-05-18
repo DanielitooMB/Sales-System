@@ -12,6 +12,7 @@ public class Menu extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Menu.class.getName());
     private String nombreUsuario;
+    private int usuarioId;
     /**
      * Creates new form me
      */
@@ -20,8 +21,9 @@ public class Menu extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
     
-    public Menu(String nombreUsuario) {
+    public Menu(String nombreUsuario, int usuarioId) {
         this.nombreUsuario = nombreUsuario;
+        this.usuarioId = usuarioId;
         initComponents();
         txtlbl1.setText(nombreUsuario);
         this.setLocationRelativeTo(null);
@@ -41,9 +43,10 @@ public class Menu extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtlbl1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        MenuBtn2 = new javax.swing.JButton();
+        MenuBtn3 = new javax.swing.JButton();
+        MenuBtn4 = new javax.swing.JButton();
+        MenuBtn1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,11 +69,33 @@ public class Menu extends javax.swing.JFrame {
         txtlbl1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         txtlbl1.setText("...");
 
-        jButton1.setText("PUNTO DE VENTA");
+        MenuBtn2.setText("PUNTO DE VENTA");
+        MenuBtn2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuBtn2MouseClicked(evt);
+            }
+        });
 
-        jButton2.setText("INVENTARIO");
+        MenuBtn3.setText("INVENTARIO");
+        MenuBtn3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuBtn3MouseClicked(evt);
+            }
+        });
 
-        jButton3.setText("REPORTES");
+        MenuBtn4.setText("REPORTES");
+        MenuBtn4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuBtn4MouseClicked(evt);
+            }
+        });
+
+        MenuBtn1.setText("CLIENTE");
+        MenuBtn1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuBtn1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -88,9 +113,10 @@ public class Menu extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(74, 74, 74)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(MenuBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MenuBtn4, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MenuBtn3, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MenuBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -103,12 +129,14 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtlbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(MenuBtn1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(MenuBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(MenuBtn3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addComponent(MenuBtn4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -142,35 +170,32 @@ public class Menu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void MenuBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn1MouseClicked
+        Client clienteFrame = new Client(this);
+        clienteFrame.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_MenuBtn1MouseClicked
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
-    }
+    private void MenuBtn2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn2MouseClicked
+        PointSale puntoVenta = new PointSale(nombreUsuario, usuarioId, this);
+        puntoVenta.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_MenuBtn2MouseClicked
+
+    private void MenuBtn3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn3MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuBtn3MouseClicked
+
+    private void MenuBtn4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn4MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuBtn4MouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton MenuBtn1;
+    private javax.swing.JButton MenuBtn2;
+    private javax.swing.JButton MenuBtn3;
+    private javax.swing.JButton MenuBtn4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
