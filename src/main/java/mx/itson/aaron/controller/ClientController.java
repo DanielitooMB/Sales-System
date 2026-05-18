@@ -20,13 +20,13 @@ public class ClientController {
         this.clientDAO = new ClientDao();
     }
  
-    // Registrar nuevo cliente
+    //Registrar nuevo cliente
     public boolean registrarCliente(String nombre, String email, String telefono, String direccion) {
         // Validar campos obligatorios
         if (nombre == null || nombre.trim().isEmpty()) return false;
         if (telefono == null || telefono.trim().isEmpty()) return false;
  
-        // Teléfono es UNIQUE en la BD
+        //Teléfono es UNIQUE en la BD
         if (clientDAO.existeTelefono(telefono.trim())) return false;
  
         Client nuevoCliente = new Client(
@@ -39,23 +39,23 @@ public class ClientController {
         return clientDAO.insertar(nuevoCliente);
     }
  
-    // Buscar cliente por ID (usado en el PointSale)
+    //Buscar cliente por ID (usado en el PointSale)
     public Client buscarPorId(int id) {
         return clientDAO.buscarPorId(id);
     }
  
-    // Buscar cliente por teléfono
+    //Buscar cliente por teléfono
     public Client buscarPorTelefono(String telefono) {
         if (telefono == null || telefono.trim().isEmpty()) return null;
         return clientDAO.buscarPorTelefono(telefono.trim());
     }
  
-    // Obtener todos los clientes
+    //Obtener todos los clientes
     public List<Client> obtenerTodos() {
         return clientDAO.obtenerTodos();
     }
  
-    // Verificar si el teléfono ya está registrado
+    //Verificar si el teléfono ya está registrado
     public boolean telefonoExiste(String telefono) {
         if (telefono == null || telefono.trim().isEmpty()) return false;
         return clientDAO.existeTelefono(telefono.trim());

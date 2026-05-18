@@ -19,7 +19,7 @@ import mx.itson.aaron.model.Product;
  */
 public class ProductDao {
     
-    // Obtener todos los productos ordenados por precio final ASC (via stored procedure)
+    //Obtener todos los productos ordenados por precio final ASC (via stored procedure)
     public List<Product> obtenerOrdenadosPorPrecio() {
         List<Product> productos = new ArrayList<>();
         String sql = "CALL sp_obtener_productos_ordenados()";
@@ -36,7 +36,7 @@ public class ProductDao {
         return productos;
     }
  
-    // Obtener productos por categoría (nombre de categoría)
+    //Obtener productos por categoría (nombre de categoría)
     public List<Product> obtenerPorCategoria(String nombreCategoria) {
         List<Product> productos = new ArrayList<>();
         String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
@@ -57,7 +57,7 @@ public class ProductDao {
         return productos;
     }
  
-    // Buscar producto por nombre exacto
+    //Buscar producto por nombre exacto
     public Product buscarPorNombre(String nombre) {
         String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
                      "FROM productos p JOIN categorias c ON p.categoria_id = c.id WHERE p.nombre = ?";
@@ -76,7 +76,7 @@ public class ProductDao {
         return null;
     }
  
-    // Buscar producto por ID
+    //Buscar producto por ID
     public Product buscarPorId(int id) {
         String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
                      "FROM productos p JOIN categorias c ON p.categoria_id = c.id WHERE p.id = ?";
@@ -95,15 +95,19 @@ public class ProductDao {
         return null;
     }
  
-    // Descontar stock al confirmar una compra
-    public boolean descontarStock(int productoId, int cantidad) {
-        String sql = "UPDATE productos SET stock = stock - ? WHERE id = ? AND stock >= ?";
+    //Insertar nuevo producto
+    public boolean insertar(Product producto) {
+        String sql = "INSERT INTO productos (nombre, descripcion, precio, precio_oferta, stock, categoria_id) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
         try (java.sql.Connection conn = Connection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
  
-            stmt.setInt(1, cantidad);
-            stmt.setInt(2, productoId);
-            stmt.setInt(3, cantidad);  // Evita stock negativo
+            stmt.setString(1, producto.getNombre());
+            stmt.setString(2, producto.getDescripcion());
+            stmt.setBigDecimal(3, producto.getPrecio());
+            stmt.setBigDecimal(4, producto.getPrecioOferta());
+            stmt.setInt(5, producto.getStock());
+            stmt.setInt(6, producto.getCategoriaId());
  
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -112,7 +116,65 @@ public class ProductDao {
         }
     }
  
-    // Mapear ResultSet a Product
+    //Actualizar producto existente
+    public boolean actualizar(Product producto) {
+        String sql = "UPDATE productos SET nombre = ?, descripcion = ?, precio = ?, " +
+                     "precio_oferta = ?, stock = ?, categoria_id = ? WHERE id = ?";
+        try (java.sql.Connection conn = Connection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+ 
+            stmt.setString(1, producto.getNombre());
+            stmt.setString(2, producto.getDescripcion());
+            stmt.setBigDecimal(3, producto.getPrecio());
+            stmt.setBigDecimal(4, producto.getPrecioOferta());
+            stmt.setInt(5, producto.getStock());
+            stmt.setInt(6, producto.getCategoriaId());
+            stmt.setInt(7, producto.getId());
+ 
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+ 
+    //Eliminar producto por ID
+    public boolean eliminar(int id) {
+        String sql = "DELETE FROM productos WHERE id = ?";
+        try (java.sql.Connection conn = Connection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+ 
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+ 
+    //Descontar stock al confirmar una compra
+    public boolean descontarStock(int productoId, int cantidad) {
+        String sql = "UPDATE productos SET stock = stock - ? WHERE id = ? AND stock >= ?";
+        try (java.sql.Connection conn = Connection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+ 
+            stmt.setInt(1, cantidad);
+            stmt.setInt(2, productoId);
+            stmt.setInt(3, cantidad);
+ 
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+ 
+    //Verificar si el nombre ya existe (UNIQUE en la BD)
+    public boolean existeNombre(String nombre) {
+        return buscarPorNombre(nombre) != null;
+    }
+ 
+    //Mapear ResultSet a Product
     private Product mapearResultadoAProduct(ResultSet rs) throws SQLException {
         Product p = new Product();
         p.setId(rs.getInt("id"));

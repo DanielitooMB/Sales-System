@@ -19,7 +19,7 @@ import mx.itson.aaron.model.Client;
  */
 public class ClientDao {
     
-    // Buscar cliente por ID
+    //Buscar cliente por ID
     public Client buscarPorId(int id) {
         String sql = "SELECT * FROM clientes WHERE id = ?";
         try (java.sql.Connection conn = Connection.getConnection();
@@ -37,7 +37,7 @@ public class ClientDao {
         return null;
     }
  
-    // Buscar cliente por teléfono
+    //Buscar cliente por teléfono
     public Client buscarPorTelefono(String telefono) {
         String sql = "SELECT * FROM clientes WHERE telefono = ?";
         try (java.sql.Connection conn = Connection.getConnection();
@@ -55,7 +55,7 @@ public class ClientDao {
         return null;
     }
  
-    // Obtener todos los clientes
+    //Obtener todos los clientes
     public List<Client> obtenerTodos() {
         List<Client> clientes = new ArrayList<>();
         String sql = "SELECT * FROM clientes ORDER BY nombre";
@@ -72,7 +72,7 @@ public class ClientDao {
         return clientes;
     }
  
-    // Insertar nuevo cliente
+    //Insertar nuevo cliente
     public boolean insertar(Client cliente) {
         String sql = "INSERT INTO clientes (nombre, email, telefono, direccion) VALUES (?, ?, ?, ?)";
         try (java.sql.Connection conn = Connection.getConnection();
@@ -90,7 +90,7 @@ public class ClientDao {
         }
     }
  
-    // Actualizar cliente
+    //Actualizar cliente
     public boolean actualizar(Client cliente) {
         String sql = "UPDATE clientes SET nombre = ?, email = ?, telefono = ?, direccion = ? WHERE id = ?";
         try (java.sql.Connection conn = Connection.getConnection();
@@ -109,7 +109,7 @@ public class ClientDao {
         }
     }
  
-    // Verificar si teléfono ya existe (UNIQUE en la BD)
+    //Verificar si teléfono ya existe (UNIQUE en la BD)
     public boolean existeTelefono(String telefono) {
         return buscarPorTelefono(telefono) != null;
     }

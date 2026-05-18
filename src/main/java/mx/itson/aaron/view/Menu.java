@@ -13,6 +13,7 @@ public class Menu extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Menu.class.getName());
     private String nombreUsuario;
     private int usuarioId;
+    private String rolUsuario;
     /**
      * Creates new form me
      */
@@ -21,9 +22,10 @@ public class Menu extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
     
-    public Menu(String nombreUsuario, int usuarioId) {
+    public Menu(String nombreUsuario, int usuarioId, String rolUsuario) {
         this.nombreUsuario = nombreUsuario;
         this.usuarioId = usuarioId;
+        this.rolUsuario = rolUsuario;
         initComponents();
         txtlbl1.setText(nombreUsuario);
         this.setLocationRelativeTo(null);
@@ -134,7 +136,7 @@ public class Menu extends javax.swing.JFrame {
                 .addComponent(MenuBtn2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(MenuBtn3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addComponent(MenuBtn4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(64, 64, 64))
         );
@@ -153,7 +155,7 @@ public class Menu extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(86, 86, 86)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -183,7 +185,16 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuBtn2MouseClicked
 
     private void MenuBtn3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn3MouseClicked
-        // TODO add your handling code here:
+        //Si es admin = InventoryAdmin
+        //Si es vendedor = Inventory
+        if ("admin".equalsIgnoreCase(rolUsuario)) {
+            InventoryAdmin inventarioAdmin = new InventoryAdmin(this);
+            inventarioAdmin.setVisible(true);
+        } else {
+            Inventory inventario = new Inventory(this);
+            inventario.setVisible(true);
+        }
+        this.setVisible(false);
     }//GEN-LAST:event_MenuBtn3MouseClicked
 
     private void MenuBtn4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuBtn4MouseClicked

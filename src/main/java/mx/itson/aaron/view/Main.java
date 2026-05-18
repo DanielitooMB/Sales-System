@@ -63,13 +63,13 @@ public class Main extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("Gmail");
+        jLabel2.setText("Gmail:");
 
         GmailTfld.addActionListener(this::GmailTfldActionPerformed);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Contraseña");
+        jLabel3.setText("Contraseña:");
 
         PassFld1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -209,7 +209,7 @@ public class Main extends javax.swing.JFrame {
             User usuarioLogeado = userController.getUsuarioActual();
             JOptionPane.showMessageDialog(this, "¡Bienvenido " + usuarioLogeado.getNombre() + "!", "Login Exitoso", JOptionPane.INFORMATION_MESSAGE);
             
-            Menu menu = new Menu(usuarioLogeado.getNombre(), usuarioLogeado.getId());
+            Menu menu = new Menu(usuarioLogeado.getNombre(), usuarioLogeado.getId(), usuarioLogeado.getRol());
             menu.setVisible(true);
             this.dispose(); 
         } else {

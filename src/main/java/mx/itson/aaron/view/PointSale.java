@@ -108,11 +108,11 @@ public class PointSale extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Cliente");
+        jLabel2.setText("Cliente:");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Vendedor");
+        jLabel3.setText("Vendedor:");
 
         ClientTfld.addActionListener(this::ClientTfldActionPerformed);
 
@@ -165,20 +165,20 @@ public class PointSale extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("Producto");
+        jLabel5.setText("Producto:");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel6.setText("Categoría");
+        jLabel6.setText("Categoría:");
         jLabel6.setToolTipText("");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setText("Precio");
+        jLabel7.setText("Precio:");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel8.setText("Cantidad");
+        jLabel8.setText("Cantidad:");
 
         PriceTfld.addActionListener(this::PriceTfldActionPerformed);
 

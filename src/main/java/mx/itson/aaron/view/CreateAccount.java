@@ -72,20 +72,20 @@ public class CreateAccount extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel8.setText("Gmail");
+        jLabel8.setText("Gmail:");
 
         GmailTfld.addActionListener(this::GmailTfldActionPerformed);
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Contraseña");
+        jLabel3.setText("Contraseña:");
 
         PassFld2.addActionListener(this::PassFld2ActionPerformed);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel9.setText("Usuario");
+        jLabel9.setText("Usuario:");
 
         UserTfld.addActionListener(this::UserTfldActionPerformed);
 

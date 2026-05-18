@@ -19,11 +19,8 @@ import mx.itson.aaron.model.ProductOrder;
  * @author Daniel
  */
 public class PointSaleController {
-    
  
-    // -------- Clases internas --------
- 
-    /** Representa una línea del carrito (lo que se muestra en la CartTbl) */
+    //Representa una línea del carrito
     public static class CartItem {
         private final int productoId;
         private final String nombre;
@@ -47,7 +44,7 @@ public class PointSaleController {
         public BigDecimal getTotal()     { return precioUnitario.multiply(BigDecimal.valueOf(cantidad)); }
     }
  
-    /** Resultado de agregar un item al carrito */
+    //Resultado de agregar un item al carrito
     public enum AddResult {
         OK,
         PRODUCTO_NO_ENCONTRADO,
@@ -55,8 +52,7 @@ public class PointSaleController {
         CANTIDAD_INVALIDA
     }
  
-    // -------- Estado --------
- 
+    //Estado
     private final ProductDao   productDAO;
     private final OrderDao     orderDAO;
     private final ClientController clientController;
@@ -72,12 +68,8 @@ public class PointSaleController {
         this.usuarioId         = usuarioId;
     }
  
-    // -------- Cliente --------
- 
-    /**
-     * Carga el cliente a partir del ID ingresado en ClientTfld.
-     * @return el Client si existe, null si no.
-     */
+    //Cliente
+    //Carga el cliente a partir del ID ingresado en ClientTfld.
     public Client cargarCliente(String idTexto) {
         try {
             int id = Integer.parseInt(idTexto.trim());
@@ -91,28 +83,23 @@ public class PointSaleController {
  
     public Client getClienteActual() { return clienteActual; }
  
-    // -------- Categorías --------
- 
-    /** Devuelve los nombres de categoría tal como están en la BD (para CategoryBox) */
+    //Categorías
+    //Devuelve los nombres de categoría tal como están en la BD (para CategoryBox)
     public String[] obtenerCategorias() {
         return new String[]{"Carnes frias", "Pescados", "Verduras", "Frutas", "Lacteos", "Bebidas", "Snacks"};
     }
  
-    /** Devuelve los productos de una categoría para sugerencias/validación */
+    //Devuelve los productos de una categoría para sugerencias/validación
     public List<Product> obtenerProductosPorCategoria(String categoria) {
         return productDAO.obtenerPorCategoria(categoria);
     }
  
-    // -------- Carrito --------
- 
-    /**
-     * Agrega un producto al carrito.
-     * El precio que se guarda es el que viene del campo PriceTfld (precio ingresado manualmente),
-     * pero validamos contra el stock real.
-     */
+    //Carrito
+    //Agrega un producto al carrito.
+    //El precio que se guarda es el que viene del campo PriceTfld (precio ingresado manualmente), pero se valida contra el stock real.
     public AddResult agregarAlCarrito(String nombreProducto, String categoriaSeleccionada,
                                       String cantidadTexto, String precioTexto) {
-        // Validar cantidad
+        //Validar cantidad
         int cantidad;
         try {
             cantidad = Integer.parseInt(cantidadTexto.trim());
@@ -121,7 +108,7 @@ public class PointSaleController {
             return AddResult.CANTIDAD_INVALIDA;
         }
  
-        // Validar precio
+        //Validar precio
         BigDecimal precio;
         try {
             precio = new BigDecimal(precioTexto.trim().replace(",", ""));
@@ -130,11 +117,11 @@ public class PointSaleController {
             return AddResult.CANTIDAD_INVALIDA;
         }
  
-        // Buscar producto por nombre
+        //Buscar producto por nombre
         Product producto = productDAO.buscarPorNombre(nombreProducto.trim());
         if (producto == null) return AddResult.PRODUCTO_NO_ENCONTRADO;
  
-        // Verificar stock (incluyendo lo ya en el carrito)
+        //Verificar stock (incluyendo lo ya en el carrito)
         int cantidadEnCarrito = carrito.stream()
                 .filter(i -> i.getProductoId() == producto.getId())
                 .mapToInt(CartItem::getCantidad)
@@ -144,7 +131,7 @@ public class PointSaleController {
             return AddResult.STOCK_INSUFICIENTE;
         }
  
-        // Agregar al carrito
+        //Agregar al carrito
         carrito.add(new CartItem(
             producto.getId(),
             producto.getNombre(),
@@ -156,39 +143,35 @@ public class PointSaleController {
         return AddResult.OK;
     }
  
-    /** Elimina el item en la posición dada (fila de la tabla) */
+    //Elimina el item en la fila
     public void eliminarDelCarrito(int fila) {
         if (fila >= 0 && fila < carrito.size()) {
             carrito.remove(fila);
         }
     }
  
-    /** Devuelve el carrito ordenado de menor a mayor por total de línea */
+    //Devuelve el carrito ordenado de menor a mayor por total de línea
     public List<CartItem> getCarritoOrdenado() {
         return carrito.stream()
                 .sorted((a, b) -> a.getTotal().compareTo(b.getTotal()))
                 .collect(java.util.stream.Collectors.toList());
     }
  
-    /** Calcula el total de toda la compra */
+    //Calcula el total de toda la compra
     public BigDecimal calcularTotal() {
         return carrito.stream()
                 .map(CartItem::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
  
-    /** Devuelve true si el carrito no tiene items */
+    //Devuelve true si el carrito no tiene items
     public boolean carritoVacio() { return carrito.isEmpty(); }
  
-    /** Limpia el carrito (después de finalizar) */
+    //Limpia el carrito (después de finalizar)
     public void limpiarCarrito() { carrito.clear(); }
  
-    // -------- Finalizar compra --------
- 
-    /**
-     * Guarda la orden en la BD y descuenta stock.
-     * @return el ID de la orden generada, o -1 si falló.
-     */
+    //Finalizar compra
+    //Guarda la orden en la BD y descuenta stock.
     public int finalizarCompra() {
         if (clienteActual == null || carritoVacio()) return -1;
  
@@ -199,7 +182,7 @@ public class PointSaleController {
             true
         );
  
-        // Convertir carrito a ProductOrder
+        //Convertir carrito a ProductOrder
         List<ProductOrder> items = new ArrayList<>();
         for (CartItem item : carrito) {
             items.add(new ProductOrder(0, item.getProductoId(), item.getCantidad(), item.getPrecioUnitario()));
@@ -213,12 +196,9 @@ public class PointSaleController {
         return ordenId;
     }
  
-    // -------- Datos para la tabla --------
- 
-    /**
-     * Convierte el carrito ordenado a un Object[][] listo para DefaultTableModel.
-     * Columnas: Producto | Categoría | Cantidad | Precio Unit. | Total
-     */
+    //Datos para la tabla
+    //Convierte el carrito ordenado a un Object[][] listo para DefaultTableModel.
+    //Columnas: Producto | Categoría | Cantidad | Precio Unit. | Total
     public Object[][] getDataParaTabla() {
         List<CartItem> ordenado = getCarritoOrdenado();
         Object[][] data = new Object[ordenado.size()][5];

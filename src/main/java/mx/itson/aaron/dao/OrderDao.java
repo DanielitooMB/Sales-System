@@ -19,15 +19,11 @@ import mx.itson.aaron.model.ProductOrder;
  */
 public class OrderDao {
  
-    /**
-     * Guarda la orden completa en una sola transacción:
-     *  1. Inserta en ordenes
-     *  2. Inserta cada fila en orden_productos
-     *  3. Descuenta el stock de cada producto
-     * Si algo falla, hace rollback automático.
-     *
-     * @return el ID generado de la orden, o -1 si falló
-     */
+    //Guarda la orden completa en una sola transacción:
+    //Inserta en ordenes
+    //Inserta cada fila en orden_productos
+    //Descuenta el stock de cada producto
+    //Si algo falla, hace rollback automático.
     public int insertarOrdenCompleta(Order orden, List<ProductOrder> items) {
         String sqlOrden = "INSERT INTO ordenes (cliente_id, usuario_id, total, is_active) VALUES (?, ?, ?, ?)";
         String sqlItem  = "INSERT INTO orden_productos (orden_id, producto_id, cantidad, precio) VALUES (?, ?, ?, ?)";
@@ -57,25 +53,25 @@ public class OrderDao {
                 }
             }
  
-            // 2. Insertar cada item y descontar stock
+            //Insertar cada item y descontar stock
             try (PreparedStatement stmtItem  = conn.prepareStatement(sqlItem);
                  PreparedStatement stmtStock = conn.prepareStatement(sqlStock)) {
  
                 for (ProductOrder item : items) {
-                    // Insertar en orden_productos
+                    //Insertar en orden_productos
                     stmtItem.setInt(1, ordenId);
                     stmtItem.setInt(2, item.getProductoId());
                     stmtItem.setInt(3, item.getCantidad());
                     stmtItem.setBigDecimal(4, item.getPrecio());
                     stmtItem.addBatch();
  
-                    // Descontar stock (falla si no hay suficiente)
+                    //Descontar stock (falla si no hay suficiente)
                     stmtStock.setInt(1, item.getCantidad());
                     stmtStock.setInt(2, item.getProductoId());
                     stmtStock.setInt(3, item.getCantidad());
                     int updated = stmtStock.executeUpdate();
                     if (updated == 0) {
-                        // Stock insuficiente — revertir todo
+                        //Stock insuficiente — revertir todo
                         conn.rollback();
                         return -1;
                     }

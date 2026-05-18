@@ -32,12 +32,12 @@ public class UserController {
         
         User usuario = userDAO.buscarPorEmail(email.trim());
         
-        // Si no existe, está inactivo o la contraseña no coincide = false
+        //Si no existe, está inactivo o la contraseña no coincide = false
         if (usuario == null || !usuario.isIsActive() || !usuario.getPasswordHash().equals(contraseña)) {
             return false;
         }
         
-        // Login exitoso, se guarda la sesión
+        //Login exitoso, se guarda la sesión
         this.usuarioActual = usuario;
         return true;
     }
