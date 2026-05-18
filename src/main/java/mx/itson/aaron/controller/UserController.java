@@ -25,7 +25,7 @@ public class UserController {
     //Autenticar LOGIN
     
     public boolean login(String email, String contraseña) {
-        // Validar datos
+        //Validar datos
         if (email == null || email.trim().isEmpty() || contraseña == null || contraseña.trim().isEmpty()) {
             return false;
         }
@@ -49,7 +49,7 @@ public class UserController {
             return false;
         }
         
-        // Si el correo ya existe
+        //Si el correo ya existe
         if (userDAO.existeEmail(email.trim())) {
             return false;
         }

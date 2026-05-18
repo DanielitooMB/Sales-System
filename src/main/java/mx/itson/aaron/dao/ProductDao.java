@@ -18,38 +18,69 @@ import mx.itson.aaron.model.Product;
  * @author Daniel
  */
 public class ProductDao {
+ 
+    //Fallback SQL
+    private static final String SQL_TODOS_ORDENADOS =
+        "SELECT p.*, c.nombre AS categoria_nombre, " +
+        "       COALESCE(p.precio_oferta, p.precio) AS precio_final " +
+        "FROM productos p " +
+        "JOIN categorias c ON p.categoria_id = c.id " +
+        "ORDER BY precio_final ASC";
     
-    //Obtener todos los productos ordenados por precio final ASC (via stored procedure)
+    //Obtiene todos los productos ordenados de menor a mayor precio_final.
+    //Intenta el Stored Procedure primero; si falla,
+    //ejecuta la consulta SQL directa equivalente.
     public List<Product> obtenerOrdenadosPorPrecio() {
         List<Product> productos = new ArrayList<>();
-        String sql = "CALL sp_obtener_productos_ordenados()";
-        try (java.sql.Connection conn = Connection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
  
-            while (rs.next()) {
-                productos.add(mapearResultadoAProduct(rs));
+        try (java.sql.Connection conn = Connection.getConnection()) {
+ 
+            //primer intento: Stored Procedure
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs   = stmt.executeQuery("CALL sp_obtener_productos_ordenados()")) {
+ 
+                while (rs.next()) {
+                    productos.add(mapearResultadoAProduct(rs));
+                }
+                System.out.println("Productos cargados via Stored Procedure (" + productos.size() + ")");
+ 
+            } catch (SQLException spEx) {
+                // SP no existe aun → usar SQL directo
+                System.out.println("SP no disponible, usando SQL directo: " + spEx.getMessage());
+                productos.clear();
+ 
+                try (Statement stmt2 = conn.createStatement();
+                     ResultSet rs2   = stmt2.executeQuery(SQL_TODOS_ORDENADOS)) {
+ 
+                    while (rs2.next()) {
+                        productos.add(mapearResultadoAProduct(rs2));
+                    }
+                    System.out.println("Productos cargados via SQL directo (" + productos.size() + ")");
+                }
             }
+ 
         } catch (SQLException e) {
+            System.err.println("Error al obtener productos: " + e.getMessage());
             e.printStackTrace();
         }
+ 
         return productos;
     }
  
-    //Obtener productos por categoría (nombre de categoría)
+    //Obtener productos por categoria (nombre de categoria)
     public List<Product> obtenerPorCategoria(String nombreCategoria) {
         List<Product> productos = new ArrayList<>();
-        String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
+        String sql = "SELECT p.*, c.nombre AS categoria_nombre, " +
+                     "COALESCE(p.precio_oferta, p.precio) AS precio_final " +
                      "FROM productos p JOIN categorias c ON p.categoria_id = c.id " +
                      "WHERE c.nombre = ? ORDER BY precio_final ASC";
+ 
         try (java.sql.Connection conn = Connection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
  
             stmt.setString(1, nombreCategoria);
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    productos.add(mapearResultadoAProduct(rs));
-                }
+                while (rs.next()) productos.add(mapearResultadoAProduct(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,16 +90,17 @@ public class ProductDao {
  
     //Buscar producto por nombre exacto
     public Product buscarPorNombre(String nombre) {
-        String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
-                     "FROM productos p JOIN categorias c ON p.categoria_id = c.id WHERE p.nombre = ?";
+        String sql = "SELECT p.*, c.nombre AS categoria_nombre, " +
+                     "COALESCE(p.precio_oferta, p.precio) AS precio_final " +
+                     "FROM productos p JOIN categorias c ON p.categoria_id = c.id " +
+                     "WHERE LOWER(p.nombre) = LOWER(?)";
+ 
         try (java.sql.Connection conn = Connection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
  
-            stmt.setString(1, nombre);
+            stmt.setString(1, nombre.trim());
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapearResultadoAProduct(rs);
-                }
+                if (rs.next()) return mapearResultadoAProduct(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,16 +110,17 @@ public class ProductDao {
  
     //Buscar producto por ID
     public Product buscarPorId(int id) {
-        String sql = "SELECT p.*, c.nombre AS categoria_nombre, COALESCE(p.precio_oferta, p.precio) AS precio_final " +
-                     "FROM productos p JOIN categorias c ON p.categoria_id = c.id WHERE p.id = ?";
+        String sql = "SELECT p.*, c.nombre AS categoria_nombre, " +
+                     "COALESCE(p.precio_oferta, p.precio) AS precio_final " +
+                     "FROM productos p JOIN categorias c ON p.categoria_id = c.id " +
+                     "WHERE p.id = ?";
+ 
         try (java.sql.Connection conn = Connection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
  
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapearResultadoAProduct(rs);
-                }
+                if (rs.next()) return mapearResultadoAProduct(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,8 +141,8 @@ public class ProductDao {
             stmt.setBigDecimal(4, producto.getPrecioOferta());
             stmt.setInt(5, producto.getStock());
             stmt.setInt(6, producto.getCategoriaId());
- 
             return stmt.executeUpdate() > 0;
+ 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -130,8 +163,8 @@ public class ProductDao {
             stmt.setInt(5, producto.getStock());
             stmt.setInt(6, producto.getCategoriaId());
             stmt.setInt(7, producto.getId());
- 
             return stmt.executeUpdate() > 0;
+ 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -146,13 +179,14 @@ public class ProductDao {
  
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
+ 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
  
-    //Descontar stock al confirmar una compra
+    //Descontar stock al confirmar una compra (usado por OrderDao en transaccion)
     public boolean descontarStock(int productoId, int cantidad) {
         String sql = "UPDATE productos SET stock = stock - ? WHERE id = ? AND stock >= ?";
         try (java.sql.Connection conn = Connection.getConnection();
@@ -161,20 +195,20 @@ public class ProductDao {
             stmt.setInt(1, cantidad);
             stmt.setInt(2, productoId);
             stmt.setInt(3, cantidad);
- 
             return stmt.executeUpdate() > 0;
+ 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
  
-    //Verificar si el nombre ya existe (UNIQUE en la BD)
+    //Verificar si nombre ya existe
     public boolean existeNombre(String nombre) {
         return buscarPorNombre(nombre) != null;
     }
  
-    //Mapear ResultSet a Product
+    //Mapear ResultSet = Product
     private Product mapearResultadoAProduct(ResultSet rs) throws SQLException {
         Product p = new Product();
         p.setId(rs.getInt("id"));
@@ -190,5 +224,4 @@ public class ProductDao {
             p.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
         return p;
     }
-    
 }

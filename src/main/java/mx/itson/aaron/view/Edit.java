@@ -77,6 +77,8 @@ public class Edit extends javax.swing.JFrame {
             }
         }
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -337,7 +339,7 @@ public class Edit extends javax.swing.JFrame {
     }//GEN-LAST:event_EnterBtn3MouseClicked
 
     private void DeleteBtn2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteBtn2MouseClicked
-        // CANCELAR: volver al InventoryAdmin sin guardar
+        //CANCELAR: volver al InventoryAdmin sin guardar
         if (inventoryAdmin != null) {
             inventoryAdmin.setVisible(true);
         }

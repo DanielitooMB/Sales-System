@@ -4,7 +4,9 @@
  */
 package mx.itson.aaron.view;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import mx.itson.aaron.controller.InventoryAdminController;
 import mx.itson.aaron.controller.ProductController;
 import mx.itson.aaron.model.Product;
 
@@ -15,50 +17,86 @@ import mx.itson.aaron.model.Product;
 public class InventoryAdmin extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InventoryAdmin.class.getName());
-    private final ProductController productController = new ProductController();
-    private javax.swing.JFrame framePadre;
+    private final InventoryAdminController controller;
+    private final ProductController productController;
+    private javax.swing.JFrame parentFrame;
     
     /**
      * Creates new form InventoryAdmin
      */
     public InventoryAdmin() {
+        this.controller       = new InventoryAdminController();
+        this.productController = new ProductController();      // CORRECCION 1
         initComponents();
         this.setLocationRelativeTo(null);
+        loadProductsToTable();
     }
     
-    public InventoryAdmin(javax.swing.JFrame framePadre) {
-        this.framePadre = framePadre;
+    //Constructor con frame padre
+    public InventoryAdmin(javax.swing.JFrame parentFrame) {
+        this.parentFrame       = parentFrame;
+        this.controller        = new InventoryAdminController();
+        this.productController  = new ProductController();     // CORRECCION 1
         initComponents();
         this.setLocationRelativeTo(null);
-        cargarTabla();
+        loadProductsToTable();
+    }
+    
+    //Carga productos en la tabla desde BD
+    private void loadProductsToTable() {
+        try {
+            System.out.println("Cargando productos para tabla de inventario...");
+ 
+            Object[][] data    = controller.getAllProductsForTable();
+            String[]   columns = controller.getTableColumns();
+ 
+            if (data == null || data.length == 0) {
+                System.out.println("⚠️ No hay productos para mostrar");
+                JOptionPane.showMessageDialog(this,
+                    "No hay productos disponibles",
+                    "Inventario vacío",
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+ 
+            DefaultTableModel model = new DefaultTableModel(data, columns) {
+                @Override
+                public boolean isCellEditable(int row, int column) { return false; }
+            };
+            
+            InventoryTbl1.setModel(model);
+            System.out.println("Tabla de inventario cargada con " + data.length + " productos");
+ 
+        } catch (Exception e) {
+            System.err.println("Error al cargar productos: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                "Error al cargar inventario: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void cargarTabla() {
-        DefaultTableModel model = new DefaultTableModel(
-            ProductController.COLUMNAS_INVENTARIO, 0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        for (Object[] fila : productController.getDataParaTabla()) {
-            model.addRow(fila);
-        }
-        InventoryTbl1.setModel(model);
+        loadProductsToTable();
     }
     
-    //Devuelve el ID del producto seleccionado en la tabla, o -1 si no hay selección.
+    public void refrescarTabla() {
+        loadProductsToTable();
+    }
+
     private int getProductoIdSeleccionado() {
         int fila = InventoryTbl1.getSelectedRow();
         if (fila < 0) return -1;
-        return (int) InventoryTbl1.getValueAt(fila, 0); // Columna 0 = ID
+        Object val = InventoryTbl1.getValueAt(fila, 0);
+        if (val == null) return -1;
+        try {
+            return Integer.parseInt(val.toString());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
     
-    //Llamado por Edit cuando guarda exitosamente, para refrescar la tabla.
-    public void refrescarTabla() {
-        cargarTabla();
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -201,9 +239,7 @@ public class InventoryAdmin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackBtn3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BackBtn3MouseClicked
-        if (framePadre != null) {
-            framePadre.setVisible(true);
-        }
+        if (parentFrame != null) parentFrame.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_BackBtn3MouseClicked
 
@@ -221,19 +257,17 @@ public class InventoryAdmin extends javax.swing.JFrame {
     private void EditBtn1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EditBtn1MouseClicked
         int productoId = getProductoIdSeleccionado();
         if (productoId < 0) {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "Selecciona un producto de la tabla para editar.",
-                "Sin selección",
-                javax.swing.JOptionPane.WARNING_MESSAGE);
+                "Sin selección", JOptionPane.WARNING_MESSAGE);
             return;
         }
  
         Product producto = productController.buscarPorId(productoId);
         if (producto == null) {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "No se pudo cargar el producto seleccionado.",
-                "Error",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+                "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
  
@@ -246,34 +280,31 @@ public class InventoryAdmin extends javax.swing.JFrame {
     private void DeleteBtn2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteBtn2MouseClicked
         int productoId = getProductoIdSeleccionado();
         if (productoId < 0) {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "Selecciona un producto de la tabla para eliminar.",
-                "Sin selección",
-                javax.swing.JOptionPane.WARNING_MESSAGE);
+                "Sin selección", JOptionPane.WARNING_MESSAGE);
             return;
         }
  
-        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+        int confirm = JOptionPane.showConfirmDialog(this,
             "¿Estás seguro de que quieres eliminar este producto?\nEsta acción no se puede deshacer.",
             "Confirmar eliminación",
-            javax.swing.JOptionPane.YES_NO_OPTION,
-            javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
  
-        if (confirm != javax.swing.JOptionPane.YES_OPTION) return;
+        if (confirm != JOptionPane.YES_OPTION) return;
  
         boolean ok = productController.eliminarProducto(productoId);
         if (ok) {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "Producto eliminado correctamente.",
-                "Éxito",
-                javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            cargarTabla();
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            cargarTabla();   // CORRECCION 3
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
                 "No se pudo eliminar el producto.\n" +
                 "Puede que esté referenciado en una orden existente.",
-                "Error",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_DeleteBtn2MouseClicked
 

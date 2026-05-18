@@ -23,12 +23,12 @@ public class Menu extends javax.swing.JFrame {
     }
     
     public Menu(String nombreUsuario, int usuarioId, String rolUsuario) {
-        this.nombreUsuario = nombreUsuario;
-        this.usuarioId = usuarioId;
-        this.rolUsuario = rolUsuario;
-        initComponents();
-        txtlbl1.setText(nombreUsuario);
-        this.setLocationRelativeTo(null);
+    this.nombreUsuario = nombreUsuario;
+    this.usuarioId = usuarioId;
+    this.rolUsuario = rolUsuario;
+    initComponents();
+    txtlbl1.setText(nombreUsuario);
+    this.setLocationRelativeTo(null);
     }
 
     /**

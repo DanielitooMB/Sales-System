@@ -34,7 +34,7 @@ public class PointSale extends javax.swing.JFrame {
         this.psController = new PointSaleController(usuarioId);
         initComponents();
         this.setLocationRelativeTo(null);
-        txtlbl2.setText(nombreVendedor);
+        txtlbl2.setText(nombreVendedor != null && !nombreVendedor.isEmpty() ? nombreVendedor : "Sin asignar");
         txtlbl1.setText("$0.00");
         inicializarTabla();
     }
@@ -367,7 +367,7 @@ public class PointSale extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ClientTfldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClientTfldActionPerformed
-        // Se dispara al presionar ENTER en el campo de ID del cliente
+        //Se dispara al presionar ENTER en el campo de ID del cliente
         if (psController == null) return;
         String idTexto = ClientTfld.getText().trim();
         if (idTexto.isEmpty()) return;
@@ -524,7 +524,7 @@ public class PointSale extends javax.swing.JFrame {
                 "¡Compra registrada! Orden #" + ordenId,
                 "Éxito",
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            // Limpiar para la siguiente venta
+            //Limpiar para la siguiente venta
             ClientTfld.setText("");
             refrescarTabla();
             txtlbl1.setText("$0.00");

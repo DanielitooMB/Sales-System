@@ -20,7 +20,7 @@ public class ProductController {
     private final ProductDao productDAO;
     private final CategoryDao categoryDAO;
  
-    // Columnas de la tabla de inventario
+    //Columnas de la tabla de inventario
     public static final String[] COLUMNAS_INVENTARIO = {
         "ID", "Nombre", "Descripción", "Categoría", "Precio", "Precio Oferta", "Stock"
     };
@@ -30,43 +30,77 @@ public class ProductController {
         this.categoryDAO = new CategoryDao();
     }
  
-    // ── Lectura ──────────────────────────────────────────────────────────────
- 
-    // Obtener todos los productos ordenados por precio (para la tabla)
+    //Obtener todos los productos ordenados por precio
     public List<Product> obtenerTodos() {
-        return productDAO.obtenerOrdenadosPorPrecio();
-    }
- 
-    // Buscar producto por ID
-    public Product buscarPorId(int id) {
-        return productDAO.buscarPorId(id);
-    }
- 
-    // Obtener todas las categorías (para el JComboBox)
-    public List<Category> obtenerCategorias() {
-        return categoryDAO.obtenerTodas();
-    }
- 
-    // Convierte la lista de productos a Object[][] para DefaultTableModel
-    public Object[][] getDataParaTabla() {
-        List<Product> productos = obtenerTodos();
-        Object[][] data = new Object[productos.size()][COLUMNAS_INVENTARIO.length];
-        for (int i = 0; i < productos.size(); i++) {
-            Product p = productos.get(i);
-            Category cat = categoryDAO.buscarPorId(p.getCategoriaId());
-            String nombreCat = cat != null ? cat.getNombre() : "Sin categoría";
-            data[i][0] = p.getId();
-            data[i][1] = p.getNombre();
-            data[i][2] = p.getDescripcion();
-            data[i][3] = nombreCat;
-            data[i][4] = "$" + p.getPrecio();
-            data[i][5] = p.getPrecioOferta() != null ? "$" + p.getPrecioOferta() : "-";
-            data[i][6] = p.getStock();
+        try {
+            return productDAO.obtenerOrdenadosPorPrecio();
+        } catch (Exception e) {
+            System.err.println("Error al obtener productos: " + e.getMessage());
+            return null;
         }
-        return data;
     }
  
-    //Creación 
+    //Buscar producto por ID
+    public Product buscarPorId(int id) {
+        try {
+            return productDAO.buscarPorId(id);
+        } catch (Exception e) {
+            System.err.println("Error al buscar producto: " + e.getMessage());
+            return null;
+        }
+    }
+ 
+    //Obtener todas las categorías
+    public List<Category> obtenerCategorias() {
+        try {
+            return categoryDAO.obtenerTodas();
+        } catch (Exception e) {
+            System.err.println("Error al obtener categorías: " + e.getMessage());
+            return null;
+        }
+    }
+ 
+    //Convierte lista de productos a Object[][] para la tabla - CON MANEJO DE NULL
+    public Object[][] getDataParaTabla() {
+        try {
+            List<Product> productos = obtenerTodos();
+            
+            //*Validar que la lista no sea null o vacía
+            if (productos == null || productos.isEmpty()) {
+                System.out.println("No hay productos en la BD");
+                return new Object[0][COLUMNAS_INVENTARIO.length];
+            }
+            
+            Object[][] data = new Object[productos.size()][COLUMNAS_INVENTARIO.length];
+            
+            for (int i = 0; i < productos.size(); i++) {
+                Product p = productos.get(i);
+                
+                //Obtener nombre de categoría
+                Category cat = categoryDAO.buscarPorId(p.getCategoriaId());
+                String nombreCat = cat != null ? cat.getNombre() : "Sin categoría";
+                
+                //Llenar fila de datos
+                data[i][0] = p.getId();
+                data[i][1] = p.getNombre();
+                data[i][2] = p.getDescripcion() != null ? p.getDescripcion() : "";
+                data[i][3] = nombreCat;
+                data[i][4] = "$" + p.getPrecio().toPlainString();
+                data[i][5] = p.getPrecioOferta() != null ? "$" + p.getPrecioOferta().toPlainString() : "-";
+                data[i][6] = p.getStock();
+            }
+            
+            System.out.println("Tabla de inventario cargada con " + productos.size() + " productos");
+            return data;
+            
+        } catch (Exception e) {
+            System.err.println("Error al procesar datos para tabla: " + e.getMessage());
+            e.printStackTrace();
+            return new Object[0][COLUMNAS_INVENTARIO.length];
+        }
+    }
+ 
+    //Resultado de operaciones CRUD
     public enum SaveResult {
         OK,
         NOMBRE_VACIO,
@@ -76,9 +110,8 @@ public class ProductController {
         ERROR_BD
     }
  
-    //Insertar nuevo producto
-    public SaveResult agregarProducto(String nombre, String descripcion, String categoriaNombre,
-                                      String precioTexto, String precioOfertaTexto, String stockTexto) {
+    //Agregar nuevo producto
+    public SaveResult agregarProducto(String nombre, String descripcion, String categoriaNombre, String precioTexto, String precioOfertaTexto, String stockTexto) {
         SaveResult validacion = validarCampos(nombre, precioTexto, precioOfertaTexto, stockTexto, -1);
         if (validacion != SaveResult.OK) return validacion;
  
@@ -101,12 +134,11 @@ public class ProductController {
     }
  
     //Actualizar producto existente
-    public SaveResult actualizarProducto(int id, String nombre, String descripcion, String categoriaNombre,
-                                          String precioTexto, String precioOfertaTexto, String stockTexto) {
+    public SaveResult actualizarProducto(int id, String nombre, String descripcion, String categoriaNombre, String precioTexto, String precioOfertaTexto, String stockTexto) {
         SaveResult validacion = validarCampos(nombre, precioTexto, precioOfertaTexto, stockTexto, id);
         if (validacion != SaveResult.OK) return validacion;
  
-        // Verificar nombre duplicado en otro producto
+        //*Verificar nombre duplicado en otro producto
         Product existente = productDAO.buscarPorNombre(nombre.trim());
         if (existente != null && existente.getId() != id) return SaveResult.NOMBRE_DUPLICADO;
  
@@ -127,16 +159,18 @@ public class ProductController {
         return productDAO.actualizar(producto) ? SaveResult.OK : SaveResult.ERROR_BD;
     }
  
-    //Eliminación
- 
+    //Eliminar producto
     public boolean eliminarProducto(int id) {
-        return productDAO.eliminar(id);
+        try {
+            return productDAO.eliminar(id);
+        } catch (Exception e) {
+            System.err.println("Error al eliminar producto: " + e.getMessage());
+            return false;
+        }
     }
  
-    //Validación interna
- 
-    private SaveResult validarCampos(String nombre, String precioTexto, String precioOfertaTexto,
-                                      String stockTexto, int idActual) {
+    //Validar campos internamente
+    private SaveResult validarCampos(String nombre, String precioTexto, String precioOfertaTexto, String stockTexto, int idActual) {
         if (nombre == null || nombre.trim().isEmpty()) return SaveResult.NOMBRE_VACIO;
  
         try {
@@ -164,5 +198,4 @@ public class ProductController {
  
         return SaveResult.OK;
     }
-    
 }

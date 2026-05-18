@@ -4,6 +4,7 @@
  */
 package mx.itson.aaron.view;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import mx.itson.aaron.controller.ProductController;
 
@@ -23,30 +24,58 @@ public class Inventory extends javax.swing.JFrame {
     public Inventory() {
         initComponents();
         this.setLocationRelativeTo(null);
+        loadTable();
     }
     
+    //Constructor con frame padre
     public Inventory(javax.swing.JFrame framePadre) {
         this.framePadre = framePadre;
         initComponents();
         this.setLocationRelativeTo(null);
-        cargarTabla();
+        loadTable();
     }
     
-    private void cargarTabla() {
-        DefaultTableModel model = new DefaultTableModel(
-            ProductController.COLUMNAS_INVENTARIO, 0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
+    //Carga los productos en la tabla desde la BD
+    private void loadTable() {
+        try {
+            //Crear modelo de tabla con columnas
+            DefaultTableModel model = new DefaultTableModel(
+                ProductController.COLUMNAS_INVENTARIO, 0
+            ) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+    
+            //Obtener datos del control    ador y agregar a la tabla
+            Object[][] data = productController.getDataParaTabla();
+            
+            if (data == null || data.length == 0) {
+                System.out.println("⚠️ No hay productos en la BD");
+                JOptionPane.showMessageDialog(this, 
+                    "No hay productos disponibles", 
+                    "Inventario vacío", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
-        };
- 
-        for (Object[] fila : productController.getDataParaTabla()) {
-            model.addRow(fila);
+            
+            for (Object[] row : data) {
+                model.addRow(row);
+            }
+    
+            //Asignar modelo a la tabla
+            InventoryTbl1.setModel(model);
+            System.out.println("Tabla de inventario cargada con " + data.length + " productos");
+            
+        } catch (Exception e) {
+            System.err.println("Error al cargar tabla: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error al cargar inventario: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
- 
-        InventoryTbl1.setModel(model);
     }
 
     /**
@@ -161,7 +190,9 @@ public class Inventory extends javax.swing.JFrame {
     }//GEN-LAST:event_BackBtn3MouseClicked
 
     private void BackBtn3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBtn3ActionPerformed
-        // TODO add your handling code here:
+        Menu menu = new Menu();
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_BackBtn3ActionPerformed
 
 
